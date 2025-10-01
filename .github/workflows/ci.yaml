@@ -21,7 +21,7 @@ jobs:
         with:
           go-version-file: go.mod
       - run: make ci-test
-      - uses: codecov/codecov-action@v3.1.1
+      - uses: codecov/codecov-action@d9f34f8cd5cb3b3eb79b3e4b5dae3a16df499a70 # v3.1.1
         with:
           token: ${{ secrets.CODECOV_UPLOAD_TOKEN }}
           file: ./.test_coverage.txt
@@ -150,7 +150,7 @@ jobs:
           chmod -R 0777 ./bin
           make build-all
       - name: Upload binaries
-        uses: xresloader/upload-to-github-release@v1.3.9
+        uses: xresloader/upload-to-github-release@a11a070bfe789a1d5e539e4f511fd31ce685aeb3 # v1.3.9
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
