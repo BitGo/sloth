@@ -85,7 +85,7 @@ spec:
       serviceAccountName: sloth
       containers:
         - name: sloth
-          image: ghcr.io/slok/sloth:v0.11.0
+          image: 199765120567.dkr.ecr.us-west-2.amazonaws.com/ghcr.io/slok/sloth:v0.11.0@sha256:b45240f284201e1ef647d9a7b466a0ebb6057f53be555d17318ef2495b54bd16
           args:
             - kubernetes-controller
             - --sli-plugins-path=/plugins
