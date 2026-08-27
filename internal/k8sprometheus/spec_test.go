@@ -472,19 +472,18 @@ metadata:
   namespace: test-ns
 spec:
   service: test-svc
+  preEvaluationRules:
+    someRule: |
+      sum_over_time(
+      (
+        sum(count by (statefulset)(kube_statefulset_status_replicas_ready{namespace="prometheus-operator", statefulset=~"prometheus-prometheus-operator-prometheus.*"}>0))
+        /
+        max(prometheus_operator_spec_shards{namespace="prometheus-operator"}))[{{.window}}:]
+      )
   slos:
   - name: slo-with-subquery
     objective: 99
     sli:
-      preEvaluationRules: 
-      - name: "someRule"
-        expr: |
-          sum_over_time(
-          (
-            sum(count by (statefulset)(kube_statefulset_status_replicas_ready{namespace="prometheus-operator", statefulset=~"prometheus-prometheus-operator-prometheus.*"}>0))
-            /
-            max(prometheus_operator_spec_shards{namespace="prometheus-operator"}))[{{.window}}:]
-          )
       events:
         errorQuery: |
           sum_over_time(
@@ -512,29 +511,30 @@ spec:
 						TimeWindow: 30 * 24 * time.Hour,
 						Labels:     map[string]string{},
 						PreEvaluationRules: map[string]string{
-							"someRule": `
-sum_over_time(
-  (
-    sum(count by (statefulset)(kube_statefulset_status_replicas_ready{namespace="prometheus-operator", statefulset=~"prometheus-prometheus-operator-prometheus.*"}>0))
-    /
-    max(prometheus_operator_spec_shards{namespace="prometheus-operator"}))[{{.window}}:]
-  )`,
-						},
-						SLI: prometheus.SLI{
-							Events: &prometheus.SLIEvents{
-								ErrorQuery: `
-sum_over_time(
+							"someRule": `sum_over_time(
 (
   sum(count by (statefulset)(kube_statefulset_status_replicas_ready{namespace="prometheus-operator", statefulset=~"prometheus-prometheus-operator-prometheus.*"}>0))
   /
   max(prometheus_operator_spec_shards{namespace="prometheus-operator"}))[{{.window}}:]
-)`,
-								TotalQuery: `sum_over_time(vector(1) [{{.window}}:])`,
+)
+`,
+						},
+						SLI: prometheus.SLI{
+							Events: &prometheus.SLIEvents{
+								ErrorQuery: `sum_over_time(
+(
+  sum(count by (statefulset)(kube_statefulset_status_replicas_ready{namespace="prometheus-operator", statefulset=~"prometheus-prometheus-operator-prometheus.*"}>0))
+  /
+  max(prometheus_operator_spec_shards{namespace="prometheus-operator"}))[{{.window}}:]
+)
+`,
+								TotalQuery: `sum_over_time(vector(1) [{{.window}}:])
+`,
 							},
 						},
 						Objective:       99,
-						PageAlertMeta:   prometheus.AlertMeta{Disable: false},
-						TicketAlertMeta: prometheus.AlertMeta{Disable: false},
+						PageAlertMeta:   prometheus.AlertMeta{Disable: false, Labels: map[string]string{}, Annotations: map[string]string{}},
+						TicketAlertMeta: prometheus.AlertMeta{Disable: false, Labels: map[string]string{}, Annotations: map[string]string{}},
 					},
 				}},
 			},

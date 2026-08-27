@@ -37,7 +37,7 @@ type PrometheusServiceLevelSpec struct {
 	// RuleDependancy is a set of Prometheus RecordingRules that should
 	// be executed before the SLO queries are, allowing for SLO defs
 	// without subqueries
-	PreEvaluationRules map[string]string
+	PreEvaluationRules map[string]string `json:"preEvaluationRules,omitempty" yaml:"preEvaluationRules,omitempty"`
 
 	// Labels are the Prometheus labels that will have all the recording
 	// and alerting rules generated for the service SLOs.
